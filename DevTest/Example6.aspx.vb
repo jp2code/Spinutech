@@ -64,15 +64,11 @@
                 ' Convert to String
                 Dim numString As String = number.ToString()
                 ' Reverse the string using array properties
-                Dim reversed As String = New String(numString.Reverse().ToArray())
                 Dim list As New List(Of String)
                 For n As Integer = numString.Length - 1 To 0 Step -1
                     list.Add(String.Format("{0}", numString(n)))
                 Next
-                Dim reversed2 As String = String.Join("", list)
-                If (reversed <> reversed2) Then
-                    Console.WriteLine("reversed={0}; reversed2={1}", reversed, reversed2)
-                End If
+                Dim reversed As String = String.Join("", list)
                 result = numString.Equals(reversed)
             End If
         Else
