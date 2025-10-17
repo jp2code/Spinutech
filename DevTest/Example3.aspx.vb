@@ -24,7 +24,7 @@
             If (Not String.IsNullOrEmpty(sValue)) Then
                 If (Integer.TryParse(sValue, nValue) And (0 < nValue)) Then
                     lblResult.Font.Name = _monospace
-                    lblResult.Text = GetSpiral(nValue, cbClockwise.Checked)
+                    lblResult.Text = GetSpiral2(nValue, cbClockwise.Checked)
                 Else
                     lblResult.Text = "Please enter an integer value greater than zero (0)."
                     txtValue.Focus()
@@ -118,4 +118,90 @@
         Return result
     End Function
 
+    Private Function GetSpiral2(maxValue As Integer, isClockwise As Boolean) As String
+        Dim size As Integer = CInt(Math.Ceiling(Math.Sqrt(maxValue + 1)))
+        Dim matrix(size - 1, size - 1) As Integer
+        Dim top As Integer = 0
+        Dim bottom As Integer = size - 1
+        Dim left As Integer = 0
+        Dim right As Integer = size - 1
+        Dim current As Integer = CInt(IIf(isClockwise, 0, maxValue))
+        While ((top <= bottom) And (left <= right))
+            If (isClockwise) Then ' Clockwise: Top => Right => Bottom => Left
+                For i As Integer = left To right
+                    If (maxValue < current) Then
+                        Exit While
+                    End If
+                    matrix(top, i) = current
+                    current += 1
+                Next
+                top += 1
+                For i As Integer = top To bottom
+                    If (maxValue < current) Then
+                        Exit While
+                    End If
+                    matrix(i, right) = current
+                    current += 1
+                Next
+                right -= 1
+                For i As Integer = right To left Step -1
+                    If (maxValue < current) Then
+                        Exit While
+                    End If
+                    matrix(bottom, i) = current
+                    current += 1
+                Next
+                bottom -= 1
+                For i As Integer = bottom To top Step -1
+                    If (maxValue < current) Then
+                        Exit While
+                    End If
+                    matrix(i, left) = current
+                    current += 1
+                Next
+                left += 1
+            Else ' Counter-clockwise: Top => Left => Bottom => Right
+                For i As Integer = right To left Step -1
+                    If (current < 0) Then
+                        Exit While
+                    End If
+                    matrix(top, i) = current
+                    current -= 1
+                Next
+                top += 1
+                For i As Integer = top To bottom
+                    If (current < 0) Then
+                        Exit While
+                    End If
+                    matrix(i, left) = current
+                    current -= 1
+                Next
+                left += 1
+                For i As Integer = left To right
+                    If (current < 0) Then
+                        Exit While
+                    End If
+                    matrix(bottom, i) = current
+                    current -= 1
+                Next
+                bottom -= 1
+                For i As Integer = bottom To top Step -1
+                    If (current < 0) Then
+                        Exit While
+                    End If
+                    matrix(i, right) = current
+                    current -= 1
+                Next
+                right -= 1
+            End If
+        End While
+        Dim sb As New StringBuilder()
+        For row As Integer = 0 To size - 1
+            For col As Integer = 0 To size - 1
+                sb.Append(matrix(row, col).ToString().PadLeft(4))
+            Next
+            sb.Append("<br />")
+        Next
+        Return sb.ToString()
+    End Function
 End Class
